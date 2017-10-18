@@ -1,6 +1,7 @@
 ﻿using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,6 +17,6 @@ namespace CinemaApi.Models
         public string Seats { get; set; }
         [Required]
         public long CinemaId { get; set; }
-        public virtual Cinema Cinema { get; set; }
+        public Cinema Cinema { get; set; }
     }
 }

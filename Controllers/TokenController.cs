@@ -11,5 +11,6 @@ namespace CinemaApi.Controllers
     [Route("api/Token")]
     public class TokenController : Controller
     {
+
     }
 }

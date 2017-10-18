@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CinemaApi.Migrations
 {
-    public partial class InitalCreateSQLite : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,6 +36,23 @@ namespace CinemaApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Movies",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Duration = table.Column<TimeSpan>(type: "TEXT", nullable: false),
+                    Genre = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Poster = table.Column<string>(type: "TEXT", nullable: false),
+                    Trailer = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Movies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,10 +106,76 @@ namespace CinemaApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Schedules",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdMovie = table.Column<long>(type: "INTEGER", nullable: false),
+                    IdRoom = table.Column<long>(type: "INTEGER", nullable: false),
+                    MovieId = table.Column<long>(type: "INTEGER", nullable: true),
+                    RoomId = table.Column<long>(type: "INTEGER", nullable: true),
+                    Showtime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tickets",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BuyDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IdSchedule = table.Column<long>(type: "INTEGER", nullable: false),
+                    ScheduleId = table.Column<long>(type: "INTEGER", nullable: true),
+                    Seat = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tickets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Schedules_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "Schedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Rooms_CinemaId",
                 table: "Rooms",
                 column: "CinemaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_MovieId",
+                table: "Schedules",
+                column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_RoomId",
+                table: "Schedules",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_ScheduleId",
+                table: "Tickets",
+                column: "ScheduleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -104,10 +187,19 @@ namespace CinemaApi.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Rooms");
+                name: "Tickets");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Schedules");
+
+            migrationBuilder.DropTable(
+                name: "Movies");
+
+            migrationBuilder.DropTable(
+                name: "Rooms");
 
             migrationBuilder.DropTable(
                 name: "Cinemas");

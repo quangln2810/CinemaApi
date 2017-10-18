@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace CinemaApi.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20171018165737_InitalCreateSQLite")]
-    partial class InitalCreateSQLite
+    [Migration("20171018184240_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,6 +58,29 @@ namespace CinemaApi.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("CinemaApi.Models.Movie", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<TimeSpan>("Duration");
+
+                    b.Property<int>("Genre");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Poster")
+                        .IsRequired();
+
+                    b.Property<string>("Trailer")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Movies");
+                });
+
             modelBuilder.Entity("CinemaApi.Models.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -90,6 +114,51 @@ namespace CinemaApi.Migrations
                     b.ToTable("Rooms");
                 });
 
+            modelBuilder.Entity("CinemaApi.Models.Schedule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("IdMovie");
+
+                    b.Property<long>("IdRoom");
+
+                    b.Property<long?>("MovieId");
+
+                    b.Property<long?>("RoomId");
+
+                    b.Property<DateTime>("Showtime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("Schedules");
+                });
+
+            modelBuilder.Entity("CinemaApi.Models.Ticket", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("BuyDate");
+
+                    b.Property<long>("IdSchedule");
+
+                    b.Property<long?>("ScheduleId");
+
+                    b.Property<string>("Seat")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.ToTable("Tickets");
+                });
+
             modelBuilder.Entity("CinemaApi.Models.User", b =>
                 {
                     b.Property<long>("Id")
@@ -121,6 +190,24 @@ namespace CinemaApi.Migrations
                         .WithMany("Rooms")
                         .HasForeignKey("CinemaId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CinemaApi.Models.Schedule", b =>
+                {
+                    b.HasOne("CinemaApi.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId");
+
+                    b.HasOne("CinemaApi.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+                });
+
+            modelBuilder.Entity("CinemaApi.Models.Ticket", b =>
+                {
+                    b.HasOne("CinemaApi.Models.Schedule", "Schedule")
+                        .WithMany("Tickets")
+                        .HasForeignKey("ScheduleId");
                 });
 #pragma warning restore 612, 618
         }

@@ -20,6 +20,11 @@ namespace CinemaApi
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseKestrel(options => {
+                    options.Limits.MaxConcurrentConnections = 100;
+                    options.Limits.MaxConcurrentUpgradedConnections = 100;
+                    options.Listen(System.Net.IPAddress.Loopback, 5000);
+                    })
                 .Build();
     }
 }

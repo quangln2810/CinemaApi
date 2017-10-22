@@ -22,7 +22,10 @@ namespace CinemaApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CinemaContext>(options => options.UseSqlite(Configuration.GetConnectionString("CimemaDbSQLite")));
-            services.AddMvc();
+            services.AddMvc()
+                 .AddJsonOptions(options => {
+                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                 }); ;
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -61,7 +64,8 @@ namespace CinemaApi
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" }
                     );
-            });
+            })
+            ;
         }
     }
 }

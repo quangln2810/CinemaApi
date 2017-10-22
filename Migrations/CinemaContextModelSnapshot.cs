@@ -103,8 +103,7 @@ namespace CinemaApi.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("Seats")
-                        .IsRequired();
+                    b.Property<string>("Seats");
 
                     b.HasKey("Id");
 

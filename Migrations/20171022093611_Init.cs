@@ -93,7 +93,7 @@ namespace CinemaApi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     CinemaId = table.Column<long>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Seats = table.Column<string>(type: "TEXT", nullable: false)
+                    Seats = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

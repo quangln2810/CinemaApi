@@ -24,7 +24,8 @@ namespace CinemaApi.Controllers
         [HttpGet]
         public IEnumerable<Cinema> GetCinema()
         {
-            return _context.Cinemas;
+            Console.WriteLine(_context.Cinemas.Include(cinema => cinema.Rooms).ToHashSet());
+            return _context.Cinemas.Include(cinema => cinema.Rooms).ToHashSet();
         }
 
         // GET: api/Cinema/5

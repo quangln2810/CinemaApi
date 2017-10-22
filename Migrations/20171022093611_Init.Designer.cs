@@ -11,7 +11,7 @@ using System;
 namespace CinemaApi.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20171018184240_Init")]
+    [Migration("20171022093611_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,8 +104,7 @@ namespace CinemaApi.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("Seats")
-                        .IsRequired();
+                    b.Property<string>("Seats");
 
                     b.HasKey("Id");
 

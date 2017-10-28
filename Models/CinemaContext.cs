@@ -12,15 +12,23 @@ namespace CinemaApi.Models
 
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Employee> Employees { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<User>()
+                .HasIndex(user => user.Email)
+                .IsUnique();
+            builder.Entity<Employee>()
+                .HasIndex(emp => emp.Email)
+                .IsUnique();
+            builder.Entity<Ticket>()
+                .HasIndex(ticket => new { ticket.IdSchedule, ticket.Seat })
+                .IsUnique();
         }
     }
 }

@@ -5,6 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinemaApi.Models
 {
+    public enum Roles
+    {
+        Administrator, Management, Cashier
+    }
     public partial class Employee
     {
         [Key]
@@ -12,10 +16,12 @@ namespace CinemaApi.Models
         [Required]
         public string Name { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]
-        public string Role { get; set; }
+        [EnumDataType(typeof(Roles))]
+        public Roles Role { get; set; }
     }
 }

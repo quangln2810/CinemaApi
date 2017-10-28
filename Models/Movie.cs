@@ -19,10 +19,13 @@ namespace CinemaApi.Models
         [Required]
         public string Name { get; set; }
         [Required]
+        [Url]
         public string Poster { get; set; }
         [Required]
+        [Url]
         public string Trailer { get; set; }
         [Required]
+        [EnumDataType(typeof(Genres))]
         public Genres Genre { get; set; }
         [Required]
         public TimeSpan Duration { get; set; }

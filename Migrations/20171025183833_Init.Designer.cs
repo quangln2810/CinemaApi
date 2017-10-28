@@ -11,7 +11,7 @@ using System;
 namespace CinemaApi.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20171022093611_Init")]
+    [Migration("20171025183833_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,10 +50,12 @@ namespace CinemaApi.Migrations
                     b.Property<string>("Password")
                         .IsRequired();
 
-                    b.Property<string>("Role")
-                        .IsRequired();
+                    b.Property<int>("Role");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Employees");
                 });
@@ -79,19 +81,6 @@ namespace CinemaApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
-                });
-
-            modelBuilder.Entity("CinemaApi.Models.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("CinemaApi.Models.Room", b =>
@@ -155,6 +144,9 @@ namespace CinemaApi.Migrations
 
                     b.HasIndex("ScheduleId");
 
+                    b.HasIndex("IdSchedule", "Seat")
+                        .IsUnique();
+
                     b.ToTable("Tickets");
                 });
 
@@ -179,6 +171,9 @@ namespace CinemaApi.Migrations
                         .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

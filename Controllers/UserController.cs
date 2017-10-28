@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.JsonPatch;
+using System.Diagnostics;
 
 namespace CinemaApi.Controllers
 {
@@ -14,6 +18,7 @@ namespace CinemaApi.Controllers
     public class UserController : Controller
     {
         private readonly CinemaContext _context;
+        
 
         public UserController(CinemaContext context)
         {
@@ -54,12 +59,8 @@ namespace CinemaApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
+            
+            user.Password = HashPassword(user.Password);
             _context.Entry(user).State = EntityState.Modified;
 
             try
@@ -79,6 +80,37 @@ namespace CinemaApi.Controllers
             }
 
             return NoContent();
+        }
+
+        // PATCH: api/User/5
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateUser([FromRoute] long id, [FromBody] JsonPatchDocument<User> userPatch)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
+            userPatch.ApplyTo(user, ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _context.Update(user).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(user);
         }
 
         // POST: api/User
@@ -117,9 +149,34 @@ namespace CinemaApi.Controllers
             return Ok(user);
         }
 
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> EmailExist([FromBody] string email)
+        {
+            return Ok(await IsEmailExist(email));
+        }
+
+        private async Task<bool> IsEmailExist(string email)
+        {
+            if (await _context.Users.AnyAsync(user => user.Email == email))
+            {
+                return true;
+            }
+            return false;
+        }
+
         private bool UserExists(long id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
         }
     }
 }

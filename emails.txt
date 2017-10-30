@@ -1,0 +1,12 @@
+To: 1@1.com
+Subject: Verify your email
+Message: Click <a href="http://localhost:5000/api/User?id=953c3792-cb7b-4e4f-9d60-f0fd59829566&token=CfDJ8GLMTpeXpfRPqadIb%2Bq6Hth%2BaT755YcU%2FxamUPdsxIjQoD0hRlBpqvo4VjQChtp2MUPZ59Aj6maVZ%2BuRrMIJB3J64U%2BlXSbw%2FuY6%2BAvR3SN975ljr2m71Ak3EZtA%2BPxXXBw6%2BL4ZgcjRbchfvOVmlXh4uvaA1CPDePeMLlkps0f6wELWl%2Bh0LIqYvqBkzxZha2ww5uBVAwaCrDM8kkSCQedEqeTjlVSvvZYRcuUeBGafqFz%2BzKZ5XOOn9vtFnib8cQ%3D%3D">here</a> to verify your email
+
+To: 2@2.com
+Subject: Verify your email
+Message: Click <a href="http://localhost:5000/api/User/VerifyEmail?id=40929fbd-eb03-4c9a-887b-1c2554fdcac8&token=CfDJ8GLMTpeXpfRPqadIb%2Bq6Hthv44%2B%2FPPm89S6MKoF1xMJA7Jd5zTRSDT9rU4G%2Bfl49OBMjc9VpOaF2pnYo1K%2BFS2OX3QLY6yjPLkj11bjzG3PFjz85KSoEZtjc7t6aFUb3GAUN41YErxg6DTiC%2FmFN9OPDFdYQXxKsC7cUr%2BfFL9m5hbhydyLQh0jMatvcHpmmkXjSSFInU6X47Agn1wqIWr9NgcEETRZ97KM99%2B%2FbEF5tUDpcha6UWxHF0U3Pf5m6Og%3D%3D">here</a> to verify your email
+
+To: 3@3.com
+Subject: Verify your email
+Message: Click <a href="http://localhost:5000/api/User/VerifyEmail?id=8beff29f-6e30-48e6-aceb-e70bc24d7085&token=CfDJ8GLMTpeXpfRPqadIb%2Bq6HtjbW%2FBH%2BqTZYNwIo7ozecmAtgPl71TIVhDcD6bGzTYrt5adVCC%2B4gacgF4c0tuyfcu1jVNY3jog6bJY7479cYJi0HlATOiXY8cclmxp%2BrFUApNQo8qy77Z1bimJznt65pkuoYy5LBGl3AqixbBLJjhGrm7tOyOPsr%2FPKoXPmCeMdNk9yCPdODOFvWNVXsgTN2DzRJ3iOMLtzlC6T3sUVQ7a26LUIN26192VzlPtD35wcA%3D%3D">here</a> to verify your email
+

@@ -11,7 +11,7 @@ using System;
 namespace CinemaApi.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20171025183833_Init")]
+    [Migration("20171029162627_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

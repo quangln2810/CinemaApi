@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CinemaApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Cinema")]
+    [Authorize]
     public class CinemaController : Controller
     {
         private readonly CinemaContext _context;

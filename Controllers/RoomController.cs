@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CinemaApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Room")]
+    [Authorize(Roles="Administrator, Manager")]
     public class RoomController : Controller
     {
         private readonly CinemaContext _context;
@@ -48,18 +50,39 @@ namespace CinemaApi.Controllers
 
         // PUT: api/Room/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoom([FromRoute] long id, [FromBody] Room room)
+        public async Task<IActionResult> PutRoom([FromBody] Room room)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != room.Id)
+            _context.Entry(room).State = EntityState.Modified;
+
+            try
             {
-                return BadRequest();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RoomExists(room.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
+            return Ok(room);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateRoom([FromRoute] long id, [FromBody] Room editedRoom)
+        {
+            var room = await _context.Rooms.FirstOrDefaultAsync(c => c.Id == id);
+            Helpers.UpdatePartial(room, editedRoom);
             _context.Entry(room).State = EntityState.Modified;
 
             try
@@ -78,7 +101,7 @@ namespace CinemaApi.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(room);
         }
 
         // POST: api/Room

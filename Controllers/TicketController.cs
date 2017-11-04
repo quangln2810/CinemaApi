@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CinemaApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Ticket")]
+    [Authorize]
     public class TicketController : Controller
     {
         private readonly CinemaContext _context;
@@ -48,18 +50,39 @@ namespace CinemaApi.Controllers
 
         // PUT: api/Ticket/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTicket([FromRoute] long id, [FromBody] Ticket ticket)
+        public async Task<IActionResult> PutTicket([FromBody] Ticket ticket)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != ticket.Id)
+            _context.Entry(ticket).State = EntityState.Modified;
+
+            try
             {
-                return BadRequest();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TicketExists(ticket.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateTicket([FromRoute] long id, [FromBody] Ticket editedTicket)
+        {
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(c => c.Id == id);
+            Helpers.UpdatePartial(ticket, editedTicket);
             _context.Entry(ticket).State = EntityState.Modified;
 
             try
@@ -78,7 +101,7 @@ namespace CinemaApi.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(ticket);
         }
 
         // POST: api/Ticket

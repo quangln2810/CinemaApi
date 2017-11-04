@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CinemaApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Schedule")]
+    [Authorize(Roles = "Administrator, Manager")]
     public class ScheduleController : Controller
     {
         private readonly CinemaContext _context;
@@ -48,18 +50,39 @@ namespace CinemaApi.Controllers
 
         // PUT: api/Schedule/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchedule([FromRoute] long id, [FromBody] Schedule schedule)
+        public async Task<IActionResult> PutSchedule([FromBody] Schedule schedule)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != schedule.Id)
+            _context.Entry(schedule).State = EntityState.Modified;
+
+            try
             {
-                return BadRequest();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ScheduleExists(schedule.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
+            return Ok(schedule);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateSchedule([FromRoute] long id, [FromBody] Schedule editedSchedule)
+        {
+            var schedule = await _context.Schedules.FirstOrDefaultAsync(c => c.Id == id);
+            Helpers.UpdatePartial(schedule, editedSchedule);
             _context.Entry(schedule).State = EntityState.Modified;
 
             try
@@ -78,7 +101,7 @@ namespace CinemaApi.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(schedule);
         }
 
         // POST: api/Schedule

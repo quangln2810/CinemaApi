@@ -7,12 +7,16 @@ using CinemaApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using CinemaApi.Controllers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
+using static CinemaApi.Services.MailService;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using CinemaApi.Data;
 
 namespace CinemaApi
 {
@@ -29,17 +33,22 @@ namespace CinemaApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CinemaContext>(options => options.UseSqlite(Configuration.GetConnectionString("CimemaDbSQLite")));
-            services.AddDbContext<IdentityDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("UserDbSQLite"),
-                optionsBuilder => optionsBuilder.MigrationsAssembly("CinemaApi")));
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddTransient<DbInitializer>();
+
+            services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
+            services.AddIdentity<User, Role>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-                .AddEntityFrameworkStores<IdentityDbContext>()
+                .AddEntityFrameworkStores<CinemaContext>()
                 .AddDefaultTokenProviders();
+            var secretKey = Configuration.GetSection("JWTSettings:SecretKey").Value;
+            var issuer = Configuration.GetSection("JWTSettings:Issuer").Value;
+            var audience = Configuration.GetSection("JWTSettings:Audience").Value;
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "Jwt";
@@ -50,7 +59,11 @@ namespace CinemaApi
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a secret key min 16 charaters")),
+                        IssuerSigningKey = signingKey,
+                        ValidateIssuer = true,
+                        ValidIssuer = issuer,
+                        ValidateAudience = true,
+                        ValidAudience = audience,
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromMinutes(5)
                     };
@@ -59,7 +72,8 @@ namespace CinemaApi
             services.AddTransient<IMessageService, FileMessageService>();
 
             services.AddMvc()
-                 .AddJsonOptions(options => {
+                 .AddJsonOptions(options =>
+                 {
                      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                  }); ;
 
@@ -67,6 +81,7 @@ namespace CinemaApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Cinema API", Version = "v1" });
+                c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
             });
             services.AddCors(options => options.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
         }
@@ -76,8 +91,8 @@ namespace CinemaApi
             IApplicationBuilder app,
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
-            IdentityDbContext identityDbContext,
-            CinemaContext cinemaContext
+            CinemaContext cinemaContext,
+            DbInitializer dbInitializer
             )
         {
             loggerFactory.AddConsole();
@@ -89,10 +104,7 @@ namespace CinemaApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                identityDbContext.Database.Migrate();
-                cinemaContext.Database.Migrate();
             }
-            app.UseAuthentication();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -102,6 +114,7 @@ namespace CinemaApi
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cinema API V1");
             });
 
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -110,6 +123,32 @@ namespace CinemaApi
                     defaults: new { controller = "Home", action = "Index" }
                     );
             });
+            dbInitializer.Initialize().Wait();
+        }
+    }
+
+    public class AuthorizationHeaderParameterOperationFilter : IOperationFilter
+    {
+        public void Apply(Operation operation, OperationFilterContext context)
+        {
+            var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
+            var isAuthorized = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is AuthorizeFilter);
+            var allowAnonymous = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is IAllowAnonymousFilter);
+
+            if (isAuthorized && !allowAnonymous)
+            {
+                if (operation.Parameters == null)
+                    operation.Parameters = new List<IParameter>();
+
+                operation.Parameters.Add(new NonBodyParameter
+                {
+                    Name = "Authorization",
+                    In = "header",
+                    Description = "access token",
+                    Required = true,
+                    Type = "string"
+                });
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace CinemaApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Cinema")]
-    [Authorize]
+    [Authorize(Roles="Administrator")]
     public class CinemaController : Controller
     {
         private readonly CinemaContext _context;
@@ -49,20 +49,41 @@ namespace CinemaApi.Controllers
             return Ok(cinema);
         }
 
-        // PUT: api/Cinema/5
+        // PUT: api/Cinema
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCinema([FromRoute] long id, [FromBody] Cinema cinema)
+        public async Task<IActionResult> PutCinema([FromBody] Cinema cinema)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != cinema.Id)
+            _context.Entry(cinema).State = EntityState.Modified;
+
+            try
             {
-                return BadRequest();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CinemaExists(cinema.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
+            return Ok(cinema);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateCinema([FromRoute] long id, [FromBody] Cinema editedCinema)
+        {
+            var cinema = await _context.Cinemas.FirstOrDefaultAsync(c => c.Id == id);
+            Helpers.UpdatePartial(cinema, editedCinema);
             _context.Entry(cinema).State = EntityState.Modified;
 
             try
@@ -81,9 +102,9 @@ namespace CinemaApi.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(cinema);
         }
-
+        
         // POST: api/Cinema
         [HttpPost]
         public async Task<IActionResult> PostCinema([FromBody] Cinema cinema)

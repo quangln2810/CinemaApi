@@ -1,25 +1,22 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinemaApi.Models
 {
-    public partial class User
+    public partial class User: IdentityUser<long>
     {
         [Key]
-        public long Id { get; set; }
+        public override long Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
-        [Required]
-        public string Password { get; set; }
-        [Required]
+        public override string Email { get; set; }
+        [EmailAddress]
+        public override string UserName { get; set; }
         public string Address { get; set; }
-        [Required]
-        [Phone]
-        public string Phone { get; set; }
     }
 }

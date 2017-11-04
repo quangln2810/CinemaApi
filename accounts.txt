@@ -1,0 +1,7 @@
+Email				Password	Role
+admin@mail.com		111111		Administrator
+manager@mail.com	111111		Manager
+quang@mail.com		111111		Administrator
+nguyen@mail.com		111111		Administrator
+
+Authorization: Bearer + token

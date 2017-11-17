@@ -194,13 +194,13 @@ namespace CinemaApi.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        [HttpGet("{role}")]
-        [Authorize(Roles = "Administrator")]
+        [HttpGet]
         [Route("List")]
-        public async Task<IActionResult> GetUsers([FromRoute] string roleName)
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> GetUsers([FromQuery] string roleName = null)
         {
             IEnumerable<User> users;
-            if (roleName == null)
+            if (String.IsNullOrEmpty(roleName))
             {
                 users = await _context.Users.ToListAsync();
             }

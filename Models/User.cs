@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace CinemaApi.Models
 {
@@ -17,6 +18,8 @@ namespace CinemaApi.Models
         public override string Email { get; set; }
         [EmailAddress]
         public override string UserName { get; set; }
+        [Url]
+        public string Avatar { get; set; }
         public string Address { get; set; }
     }
 }

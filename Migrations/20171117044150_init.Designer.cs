@@ -11,8 +11,8 @@ using System;
 namespace CinemaApi.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20171104033027_Init")]
-    partial class Init
+    [Migration("20171117044150_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -158,6 +158,8 @@ namespace CinemaApi.Migrations
                     b.Property<int>("AccessFailedCount");
 
                     b.Property<string>("Address");
+
+                    b.Property<string>("Avatar");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();

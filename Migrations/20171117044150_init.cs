@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CinemaApi.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,6 +31,7 @@ namespace CinemaApi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false),
                     Address = table.Column<string>(type: "TEXT", nullable: true),
+                    Avatar = table.Column<string>(type: "TEXT", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),

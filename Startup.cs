@@ -95,6 +95,7 @@ namespace CinemaApi
             DbInitializer dbInitializer
             )
         {
+            app.UseStaticFiles();
             loggerFactory.AddConsole();
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

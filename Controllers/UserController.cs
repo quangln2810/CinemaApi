@@ -22,7 +22,6 @@ using Microsoft.Extensions.Options;
 
 namespace CinemaApi.Controllers
 {
-
     [Produces("application/json")]
     [Route("api/User")]
     public class UserController : Controller
@@ -110,7 +109,8 @@ namespace CinemaApi.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid login");
                 return BadRequest(ModelState);
             }
-            return new ObjectResult(await GenerateTokenAsync(user));
+            var token = await GenerateTokenAsync(user);
+            return new ObjectResult(new { user.Id, user.Email, user.Avatar, user.Address, token });
         }
 
         [HttpPost]
@@ -194,11 +194,38 @@ namespace CinemaApi.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        [HttpGet]
+        [HttpGet("{role}")]
         [Authorize(Roles = "Administrator")]
-        public IEnumerable<User> GetUser()
+        [Route("List")]
+        public async Task<IActionResult> GetUsers([FromRoute] string roleName)
         {
-            return _context.Users.ToList();
+            IEnumerable<User> users;
+            if (roleName == null)
+            {
+                users = await _context.Users.ToListAsync();
+            }
+            else
+            {
+                users = await _userManager.GetUsersInRoleAsync(roleName);
+            }
+            return Ok(users.Select(async u =>
+            {
+                var role = await _userManager.GetRolesAsync(u);
+                return new { u.Id, u.Email, u.Avatar, u.Address, Role = role };
+            }));
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUser()
+        {
+            var userEmail = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            var role = await _userManager.GetRolesAsync(user);
+            return Ok(new { user.Id, user.Email, user.Avatar, user.Address, role = role });
         }
 
         [HttpPost]

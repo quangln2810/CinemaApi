@@ -158,6 +158,8 @@ namespace CinemaApi.Migrations
 
                     b.Property<string>("Address");
 
+                    b.Property<string>("Avatar");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 

@@ -17,8 +17,8 @@ namespace CinemaApi.Services
         {
             Task IMessageService.Send(string email, string subject, string message)
             {
-                var emailMessage = $"To: {email}\nSubject: {subject}\nMessage: {message}\n\n";
-                File.AppendAllText("emails.txt", emailMessage);
+                var emailContent = $"To: {email}\nSubject: {subject}\nMessage: {message}\n\n";
+                File.AppendAllText("emails.txt", emailContent);
                 return Task.FromResult(0);
             }
         }

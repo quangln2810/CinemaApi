@@ -32,9 +32,11 @@ namespace CinemaApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // DB Context
             services.AddDbContext<CinemaContext>(options => options.UseSqlite(Configuration.GetConnectionString("CimemaDbSQLite")));
             services.AddTransient<DbInitializer>();
 
+            // Authentication
             services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
             services.AddIdentity<User, Role>(options =>
             {
@@ -77,12 +79,13 @@ namespace CinemaApi
                      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                  }); ;
 
-            // Register the Swagger generator, defining one or more Swagger documents
+            // Swagger generator
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Cinema API", Version = "v1" });
                 c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
             });
+            // CORS policy for development
             services.AddCors(options => options.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
         }
 
@@ -95,17 +98,19 @@ namespace CinemaApi
             DbInitializer dbInitializer
             )
         {
-            app.UseStaticFiles();
-            loggerFactory.AddConsole();
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
-            app.UseCors("AllowAll");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseStaticFiles();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            app.UseCors("AllowAll");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -128,6 +133,9 @@ namespace CinemaApi
         }
     }
 
+    /// <summary>
+    /// Filter for authorize actions in Swagger
+    /// </summary>
     public class AuthorizationHeaderParameterOperationFilter : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)

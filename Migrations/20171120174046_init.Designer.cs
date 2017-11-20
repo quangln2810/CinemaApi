@@ -11,7 +11,7 @@ using System;
 namespace CinemaApi.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20171117044150_init")]
+    [Migration("20171120174046_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,14 +135,20 @@ namespace CinemaApi.Migrations
 
                     b.Property<long>("IdSchedule");
 
+                    b.Property<long>("IdUser");
+
                     b.Property<long?>("ScheduleId");
 
                     b.Property<string>("Seat")
                         .IsRequired();
 
+                    b.Property<long?>("UserId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ScheduleId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("IdSchedule", "Seat")
                         .IsUnique();
@@ -313,6 +319,10 @@ namespace CinemaApi.Migrations
                     b.HasOne("CinemaApi.Models.Schedule", "Schedule")
                         .WithMany("Tickets")
                         .HasForeignKey("ScheduleId");
+
+                    b.HasOne("CinemaApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>

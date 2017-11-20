@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
@@ -12,7 +10,7 @@ namespace CinemaApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Ticket")]
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class TicketController : Controller
     {
         private readonly CinemaContext _context;
@@ -143,6 +141,26 @@ namespace CinemaApi.Controllers
         private bool TicketExists(long id)
         {
             return _context.Tickets.Any(e => e.Id == id);
+        }
+
+        /// <summary>
+        /// Should be called when payment success to create ticket
+        /// </summary>
+        /// <param name="idUser"></param>
+        /// <param name="idSchedule"></param>
+        /// <param name="seat"></param>
+        /// <returns>return true if success, else return false</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public bool CreateTicket(long idUser, long idSchedule, string seat)
+        {
+            if (_context.Tickets.Any(t => t.IdUser == idUser && t.IdSchedule == idSchedule && t.Seat == seat))
+            {
+                return false;
+            }
+            Ticket ticket = new Ticket(idUser, idSchedule, seat);
+            _context.Tickets.Add(ticket);
+            _context.SaveChanges();
+            return true;
         }
     }
 }

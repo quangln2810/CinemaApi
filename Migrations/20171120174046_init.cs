@@ -247,8 +247,10 @@ namespace CinemaApi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     BuyDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IdSchedule = table.Column<long>(type: "INTEGER", nullable: false),
+                    IdUser = table.Column<long>(type: "INTEGER", nullable: false),
                     ScheduleId = table.Column<long>(type: "INTEGER", nullable: true),
-                    Seat = table.Column<string>(type: "TEXT", nullable: false)
+                    Seat = table.Column<string>(type: "TEXT", nullable: false),
+                    UserId = table.Column<long>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -257,6 +259,12 @@ namespace CinemaApi.Migrations
                         name: "FK_Tickets_Schedules_ScheduleId",
                         column: x => x.ScheduleId,
                         principalTable: "Schedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Tickets_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -319,6 +327,11 @@ namespace CinemaApi.Migrations
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tickets_UserId",
+                table: "Tickets",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_IdSchedule_Seat",
                 table: "Tickets",
                 columns: new[] { "IdSchedule", "Seat" },
@@ -349,10 +362,10 @@ namespace CinemaApi.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Schedules");
 
             migrationBuilder.DropTable(
-                name: "Schedules");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Movies");

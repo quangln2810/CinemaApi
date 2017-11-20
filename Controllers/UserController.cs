@@ -2,20 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinemaApi.Models;
-using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.JsonPatch;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using static CinemaApi.Services.MailService;
 using Microsoft.Extensions.Options;
@@ -98,6 +93,7 @@ namespace CinemaApi.Controllers
                 ModelState.AddModelError(string.Empty, "User is not exist");
                 return BadRequest(ModelState);
             }
+            // uncomment this to 
             //if (!user.EmailConfirmed)
             //{
             //    ModelState.AddModelError(string.Empty, "Confirm your email first");

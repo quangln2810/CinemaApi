@@ -204,11 +204,13 @@ namespace CinemaApi.Controllers
             {
                 users = await _userManager.GetUsersInRoleAsync(roleName);
             }
-            return Ok(users.Select(async u =>
+            List<object> result = new List<object>();
+            users.Select(async u =>
             {
                 var role = await _userManager.GetRolesAsync(u);
-                return new { u.Id, u.Email, u.Avatar, u.Address, Role = role };
-            }));
+                return new { u.Id, u.Email, u.Name, u.Avatar, u.Address, Role = role };
+            }).ToList().ForEach(r => result.Add(r.Result));
+            return Ok(result);
         }
         [HttpGet]
         [Authorize]
@@ -221,7 +223,7 @@ namespace CinemaApi.Controllers
                 return Unauthorized();
             }
             var role = await _userManager.GetRolesAsync(user);
-            return Ok(new { user.Id, user.Email, user.Avatar, user.Address, role = role });
+            return Ok(new { user.Id, user.Email, user.Name, user.Avatar, user.Address, role = role });
         }
 
         [HttpPost]

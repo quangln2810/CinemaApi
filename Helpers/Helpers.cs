@@ -20,6 +20,7 @@ namespace CinemaApi
                 var newObjPropValue = prop.GetValue(newObj);
                 if (newObjPropValue != null)
                 {
+                    if (prop.Name.EndsWith("Id") && Convert.ToDouble(newObjPropValue) == 0) continue;
                     prop.SetValue(currObj, newObjPropValue);
                 }
             }

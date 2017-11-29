@@ -22,9 +22,20 @@ namespace CinemaApi.Controllers
 
         // GET: api/Schedule
         [HttpGet]
-        public IEnumerable<Schedule> GetSchedules()
+        [AllowAnonymous]
+        public IEnumerable<object> GetSchedules()
         {
-            return _context.Schedules;
+            return _context.Schedules
+                .Include(s => s.Movie)
+                .Include(s => s.Room)
+                .Select(s => new {
+                s.Id,
+                s.IdMovie,
+                s.IdRoom,
+                s.Movie,
+                s.Room,
+                s.Showtime
+                });
         }
 
         // GET: api/Schedule/5
@@ -36,7 +47,10 @@ namespace CinemaApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var schedule = await _context.Schedules.SingleOrDefaultAsync(m => m.Id == id);
+            var schedule = await _context.Schedules
+                .Include(s => s.Movie)
+                .Include(s => s.Room)
+                .SingleOrDefaultAsync(m => m.Id == id);
 
             if (schedule == null)
             {

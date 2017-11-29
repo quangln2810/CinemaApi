@@ -22,22 +22,10 @@ namespace CinemaApi.Data
 
             Role[] roles = new Role[]
             {
-                new Role
-                {
-                    Name = "Administrator"
-                },
-                new Role
-                {
-                    Name = "Manager"
-                },
-                new Role
-                {
-                    Name = "Cashier"
-                },
-                new Role
-                {
-                    Name = "User"
-                }
+                new Role("Administrator"),
+                new Role("Manager"),
+                new Role("Cashier"),
+                new Role("User")
             };
             if (!context.Roles.Any())
             {

@@ -25,8 +25,7 @@ namespace CinemaApi.Controllers
         [HttpGet]
         public IEnumerable<Cinema> GetCinema()
         {
-            Console.WriteLine(_context.Cinemas.Include(cinema => cinema.Rooms).ToHashSet());
-            return _context.Cinemas.Include(cinema => cinema.Rooms).ToHashSet();
+            return _context.Cinemas.Include(cinema => cinema.Rooms);
         }
 
         // GET: api/Cinema/5
@@ -38,7 +37,7 @@ namespace CinemaApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var cinema = await _context.Cinemas.SingleOrDefaultAsync(m => m.Id == id);
+            var cinema = await _context.Cinemas.Include(c => c.Rooms).SingleOrDefaultAsync(c => c.Id == id);
 
             if (cinema == null)
             {

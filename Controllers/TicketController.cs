@@ -24,7 +24,7 @@ namespace CinemaApi.Controllers
         [HttpGet]
         public IEnumerable<Ticket> GetTickets()
         {
-            return _context.Tickets;
+            return _context.Tickets.Include(t => t.Schedule).Include(t => t.User);
         }
 
         // GET: api/Ticket/5

@@ -8,6 +8,10 @@ namespace CinemaApi.Models
 {
     public partial class Role: IdentityRole<long>
     {
+        public Role(string roleName)
+        {
+            Name = roleName;
+        }
         [Key]
         public override long Id { get; set; }
         [Required]

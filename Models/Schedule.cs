@@ -11,10 +11,10 @@ namespace CinemaApi.Models
         [Required]
         public DateTime Showtime { get; set; }
         [Required]
-        public long IdMovie { get; set; }
+        public long MovieId { get; set; }
         public Movie Movie { get; set; }
         [Required]
-        public long IdRoom { get; set; }
+        public long RoomId { get; set; }
         public Room Room { get; set; }
         public List<Ticket> Tickets { get; set; }
     }

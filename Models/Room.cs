@@ -8,6 +8,11 @@ namespace CinemaApi.Models
 {
     public partial class Room
     {
+        public Room() { }
+        public Room(string roomName)
+        {
+            Name = roomName;
+        }
         [Key]
         public long Id { get; set; }
         [Required]

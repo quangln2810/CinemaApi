@@ -23,19 +23,11 @@ namespace CinemaApi.Controllers
         // GET: api/Schedule
         [HttpGet]
         [AllowAnonymous]
-        public IEnumerable<object> GetSchedules()
+        public IEnumerable<Schedule> GetSchedules()
         {
             return _context.Schedules
                 .Include(s => s.Movie)
-                .Include(s => s.Room)
-                .Select(s => new {
-                s.Id,
-                s.IdMovie,
-                s.IdRoom,
-                s.Movie,
-                s.Room,
-                s.Showtime
-                });
+                .Include(s => s.Room);
         }
 
         // GET: api/Schedule/5

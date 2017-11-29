@@ -6,8 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinemaApi.Models
 {
-    public partial class Role: IdentityRole<long>
+    public partial class Role : IdentityRole<long>
     {
+        public Role() { }
         public Role(string roleName)
         {
             Name = roleName;

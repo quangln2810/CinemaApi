@@ -22,9 +22,24 @@ namespace CinemaApi.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<Cinema>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+            builder.Entity<Movie>()
+                .HasIndex(m => m.Name)
+                .IsUnique();
+            builder.Entity<Role>()
+                .HasIndex(r => r.Name)
+                .IsUnique();
+            builder.Entity<Room>()
+                .HasIndex(r => new { r.Name, r.CinemaId })
+                .IsUnique();
             builder.Entity<Ticket>()
                 .HasIndex(ticket => new { ticket.IdSchedule, ticket.Seat })
-                .IsUnique();                
+                .IsUnique();
+            builder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }

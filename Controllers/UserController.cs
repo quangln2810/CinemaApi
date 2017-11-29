@@ -225,6 +225,22 @@ namespace CinemaApi.Controllers
             var role = await _userManager.GetRolesAsync(user);
             return Ok(new { user.Id, user.Email, user.Name, user.Avatar, user.Address, role = role });
         }
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> GetUser([FromRoute] long id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var role = await _userManager.GetRolesAsync(user);
+            return Ok(new { user.Id, user.Email, user.Name, user.Avatar, user.Address, role = role });
+        }
 
         [HttpPost]
         [Route("[action]")]
@@ -264,5 +280,36 @@ namespace CinemaApi.Controllers
             return Ok(user);
         }
 
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> UpdateUser([FromRoute] long id, [FromBody] User editedUser)
+        {
+            var user = _context.Users.FirstOrDefault();
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+            Helpers.UpdatePartial(user, editedUser);
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok(user);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser([FromRoute] long id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace CinemaApi.Data
         }
         public async Task Initialize()
         {
-            // context.Database.EnsureCreated();
+            context.Database.EnsureCreated();
 
             Role[] roles = new Role[]
             {

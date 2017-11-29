@@ -27,7 +27,7 @@ namespace CinemaApi.Controllers
         {
             return _context.Schedules
                 .Include(s => s.Movie)
-                .Include(s => s.Room);
+                .Include(s => s.Room).ThenInclude(r => r.Cinema);
         }
 
         // GET: api/Schedule/5
@@ -41,7 +41,7 @@ namespace CinemaApi.Controllers
 
             var schedule = await _context.Schedules
                 .Include(s => s.Movie)
-                .Include(s => s.Room)
+                .Include(s => s.Room).ThenInclude(r => r.Cinema)
                 .SingleOrDefaultAsync(m => m.Id == id);
 
             if (schedule == null)

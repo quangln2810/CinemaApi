@@ -284,7 +284,7 @@ namespace CinemaApi.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateUser([FromRoute] long id, [FromBody] User editedUser)
         {
-            var user = _context.Users.FirstOrDefault();
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
             {
                 return BadRequest("User not found");

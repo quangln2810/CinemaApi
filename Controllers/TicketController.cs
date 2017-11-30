@@ -26,6 +26,9 @@ namespace CinemaApi.Controllers
         {
             return _context.Tickets
                 .Include(t => t.Schedule)
+                    .ThenInclude(s => s.Movie)
+                .Include(t => t.Schedule)
+                    .ThenInclude(s => s.Room)
                 .Include(t => t.User).ToList();
         }
 

@@ -8,6 +8,7 @@ namespace CinemaApi.Models
 {
     public class Ticket
     {
+        public Ticket() { }
         public Ticket(long idUser, long idSchedule, string seat)
         {
             IdUser = idUser;

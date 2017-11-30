@@ -32,6 +32,9 @@ namespace CinemaApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Cinemas");
                 });
 
@@ -55,6 +58,9 @@ namespace CinemaApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Movies");
                 });
 
@@ -74,6 +80,9 @@ namespace CinemaApi.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -97,6 +106,9 @@ namespace CinemaApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CinemaId");
+
+                    b.HasIndex("Name", "CinemaId")
+                        .IsUnique();
 
                     b.ToTable("Rooms");
                 });
@@ -128,24 +140,18 @@ namespace CinemaApi.Migrations
 
                     b.Property<DateTime>("BuyDate");
 
-                    b.Property<long>("IdSchedule");
-
-                    b.Property<long>("IdUser");
-
-                    b.Property<long?>("ScheduleId");
+                    b.Property<long>("ScheduleId");
 
                     b.Property<string>("Seat")
                         .IsRequired();
 
-                    b.Property<long?>("UserId");
+                    b.Property<long>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ScheduleId");
-
                     b.HasIndex("UserId");
 
-                    b.HasIndex("IdSchedule", "Seat")
+                    b.HasIndex("ScheduleId", "Seat")
                         .IsUnique();
 
                     b.ToTable("Tickets");
@@ -198,6 +204,9 @@ namespace CinemaApi.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -315,11 +324,13 @@ namespace CinemaApi.Migrations
                 {
                     b.HasOne("CinemaApi.Models.Schedule", "Schedule")
                         .WithMany("Tickets")
-                        .HasForeignKey("ScheduleId");
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CinemaApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>

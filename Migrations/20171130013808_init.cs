@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CinemaApi.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -244,11 +244,9 @@ namespace CinemaApi.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     BuyDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IdSchedule = table.Column<long>(type: "INTEGER", nullable: false),
-                    IdUser = table.Column<long>(type: "INTEGER", nullable: false),
-                    ScheduleId = table.Column<long>(type: "INTEGER", nullable: true),
+                    ScheduleId = table.Column<long>(type: "INTEGER", nullable: false),
                     Seat = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<long>(type: "INTEGER", nullable: true)
+                    UserId = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -258,19 +256,25 @@ namespace CinemaApi.Migrations
                         column: x => x.ScheduleId,
                         principalTable: "Schedules",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tickets_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoles_Name",
+                table: "AspNetRoles",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -294,6 +298,12 @@ namespace CinemaApi.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_Email",
+                table: "AspNetUsers",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -305,9 +315,27 @@ namespace CinemaApi.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cinemas_Name",
+                table: "Cinemas",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movies_Name",
+                table: "Movies",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rooms_CinemaId",
                 table: "Rooms",
                 column: "CinemaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rooms_Name_CinemaId",
+                table: "Rooms",
+                columns: new[] { "Name", "CinemaId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Schedules_MovieId",
@@ -320,19 +348,14 @@ namespace CinemaApi.Migrations
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_ScheduleId",
-                table: "Tickets",
-                column: "ScheduleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_UserId",
                 table: "Tickets",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_IdSchedule_Seat",
+                name: "IX_Tickets_ScheduleId_Seat",
                 table: "Tickets",
-                columns: new[] { "IdSchedule", "Seat" },
+                columns: new[] { "ScheduleId", "Seat" },
                 unique: true);
         }
 

@@ -35,7 +35,7 @@ namespace CinemaApi.Models
                 .HasIndex(r => new { r.Name, r.CinemaId })
                 .IsUnique();
             builder.Entity<Ticket>()
-                .HasIndex(ticket => new { ticket.IdSchedule, ticket.Seat })
+                .HasIndex(ticket => new { ticket.ScheduleId, ticket.Seat })
                 .IsUnique();
             builder.Entity<User>()
                 .HasIndex(u => u.Email)

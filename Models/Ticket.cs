@@ -11,8 +11,8 @@ namespace CinemaApi.Models
         public Ticket() { }
         public Ticket(long idUser, long idSchedule, string seat)
         {
-            IdUser = idUser;
-            IdSchedule = idSchedule;
+            UserId = idUser;
+            ScheduleId = idSchedule;
             Seat = seat;
         }
         [Key]
@@ -22,10 +22,10 @@ namespace CinemaApi.Models
         [Required]
         public DateTime BuyDate { get; set; }
         [Required]
-        public long IdSchedule { get; set; }
+        public long ScheduleId { get; set; }
         public Schedule Schedule { get; set; }
         [Required]
-        public long IdUser { get; set; }
+        public long UserId { get; set; }
         public User User { get; set; }
     }
 

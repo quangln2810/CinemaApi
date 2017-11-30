@@ -24,7 +24,9 @@ namespace CinemaApi.Controllers
         [HttpGet]
         public IEnumerable<Ticket> GetTickets()
         {
-            return _context.Tickets.Include(t => t.Schedule).Include(t => t.User).ToList();
+            return _context.Tickets
+                .Include(t => t.Schedule)
+                .Include(t => t.User).ToList();
         }
 
         // GET: api/Ticket/5
@@ -36,7 +38,10 @@ namespace CinemaApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var ticket = await _context.Tickets.SingleOrDefaultAsync(m => m.Id == id);
+            var ticket = await _context.Tickets
+                .Include(t => t.Schedule)
+                .Include(t => t.User)
+                .SingleOrDefaultAsync(m => m.Id == id);
 
             if (ticket == null)
             {
@@ -153,7 +158,7 @@ namespace CinemaApi.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public bool CreateTicket(long idUser, long idSchedule, string seat)
         {
-            if (_context.Tickets.Any(t => t.IdUser == idUser && t.IdSchedule == idSchedule && t.Seat == seat))
+            if (_context.Tickets.Any(t => t.UserId == idUser && t.ScheduleId == idSchedule && t.Seat == seat))
             {
                 return false;
             }
